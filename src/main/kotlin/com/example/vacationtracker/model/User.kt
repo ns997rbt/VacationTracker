@@ -8,24 +8,25 @@ class User (
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     var id: Long?= null,
-    // stavlajti konkretne nazive
-    // provera dolaznih informacija
+    @Column(name = "email",unique = true)
     var email: String? = null,
+    @Column(name = "password")
     var password: String? = null,
     @ElementCollection
     @CollectionTable(name = "vacation_total",
         joinColumns = [JoinColumn(name = "employee_id")])
     @MapKeyColumn(name = "year")
     @Column(name = "days_total")
-    var vacationDaysTotal: MutableMap<String,Int>? = mutableMapOf(),
+    var vacationDaysTotal: MutableMap<String,Int> = mutableMapOf(),
     @ElementCollection
     @CollectionTable(name = "vacation_left",
         joinColumns = [JoinColumn(name = "employee_id")])
     @MapKeyColumn(name = "year")
     @Column(name = "days_left")
-    var vacationDaysLeft: MutableMap<String,Int>? = null,
-    @OneToMany(mappedBy = "employee")
-    var vacations: MutableList<Vacation>? = null
+    var vacationDaysLeft: MutableMap<String,Int> = mutableMapOf(),
+    //@OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "id")
+    var vacations: MutableList<Vacation> = mutableListOf()
 )
 
 //@ElementCollection
