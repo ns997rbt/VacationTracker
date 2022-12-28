@@ -12,9 +12,4 @@ interface VacationRepo: JpaRepository<Vacation,Long> {
 
     @Query(value = "select count (e) from Vacation e where e.startDate = ?1 and e.endDate = ?2 and e.employee = ?3")
     fun checkDuplicates(date1: LocalDate, date2: LocalDate, employee: User): Int
-
-    // before start before end
-    // before start after end
-    // after start before end
-    // after start after end
 }

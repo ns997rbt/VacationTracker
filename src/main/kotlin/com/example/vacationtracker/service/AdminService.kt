@@ -1,6 +1,6 @@
 package com.example.vacationtracker.service
 
-import com.example.vacationtracker.errorMessages.ErrorMessage
+import com.example.vacationtracker.errors.ErrorMessage
 import com.example.vacationtracker.exceptions.BadRequestException
 import com.example.vacationtracker.exceptions.CsvImportException
 import com.example.vacationtracker.model.User
@@ -18,7 +18,6 @@ import java.nio.charset.StandardCharsets
 
 @Service
 class AdminService {
- // error msg moze u enum da bude modularno - done
     @Autowired
     lateinit var userService: UserService
     @Autowired
@@ -43,7 +42,7 @@ class AdminService {
             )
 
             for (csvRecord in parser) {
-                val user: User = User(email = csvRecord.get(0), password = csvRecord.get(1))
+                val user = User(email = csvRecord.get(0), password = csvRecord.get(1))
                 userService.uploadUser(user)
             }
             closeFileReader(reader)
@@ -98,7 +97,7 @@ class AdminService {
                     val user: User = userService.findByEmail(csvRecord.get(0))
                     val date1: String = csvRecord.get(1)
                     val date2: String = csvRecord.get(2)
-                    // provera duplog
+
 
                     if (vacationRepo.checkDuplicates(dateService.stringToDate(date1),dateService.stringToDate(date2),user) <= 0) {
                         val vacation = Vacation(
@@ -113,14 +112,11 @@ class AdminService {
                         val year: Int = vacation.startDate.year
 
                         if (user.vacationDaysLeft[year.toString()] != null) {
-                            //user.vacationDaysLeft[year.toString()] = user.vacationDaysLeft[year.toString()]!! - duration
-                            //user.vacations!!.add(vacation)
-                            //userService.uploadVacation(vacation)
                             if (user.vacationDaysLeft[year.toString()]!! >= vacation.duration) {
                                 user.vacationDaysLeft[year.toString()] =
                                     user.vacationDaysLeft[year.toString()]!! - vacation.duration
-                                user.vacations.add(vacation)
                                 userService.uploadVacation(vacation)
+                                user.vacations.add(vacation)
                             }
                         }
                     }
@@ -144,5 +140,4 @@ class AdminService {
             throw CsvImportException(ErrorMessage.BADCSVIMPORT.msg)
         }
     }
-
 }

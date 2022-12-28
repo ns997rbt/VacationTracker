@@ -12,9 +12,12 @@ import java.util.*
 class DateService {
     operator fun LocalDate.rangeTo(other: LocalDate) = DateProgression(this, other)
 
-    //Thursday, October 24, 2019
     fun dateToString(date: Date): String {
-        return SimpleDateFormat("EEEE, MMMM d, yyyy", Locale.getDefault()).format(date)
+        return SimpleDateFormat("mm-dd-yyyy", Locale.getDefault()).format(date)
+    }
+
+    fun asdf(string: String): LocalDate {
+        return LocalDate.parse(string, DateTimeFormatter.ofPattern("d.M.yyyy"))
     }
 
     fun stringToDate(string: String): LocalDate {

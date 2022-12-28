@@ -42,14 +42,13 @@ class UserService {
 
     fun searchVacation(id: Long, date1: String, date2: String): List<VacationDTO> {
 
-        val d1: LocalDate = dateService.stringToDate(date1)
-        val d2: LocalDate = dateService.stringToDate(date2)
+        val d1: LocalDate = dateService.asdf(date1)
+        val d2: LocalDate = dateService.asdf(date2)
         val u: User = findUserById(id)
 
         val dtoList: MutableList<VacationDTO> = mutableListOf()
-        for ( vacation in u.vacations ) {
-
-            if ( (d1 <= vacation.startDate) && (d2 > vacation.startDate) )
+        for ( vacation: Vacation in u.vacations ) {
+            if ( (d1 <= vacation.startDate) && (d2 >= vacation.startDate) )
                 dtoList.add(VacationDTO(vacation.startDate.toString(),vacation.endDate.toString()))
             if ( (d1 > vacation.startDate) && (d1 <= vacation.endDate))
                 dtoList.add(VacationDTO(vacation.startDate.toString(),vacation.endDate.toString()))
@@ -65,15 +64,25 @@ class UserService {
         return userRepo.findUserById(id)
     }
     fun uploadVacationByUser(date1: LocalDate, date2: LocalDate, duration: Int,user: User) {
-        println(vacationRepo.checkDuplicates(date1,date2,user))
-        if (vacationRepo.checkDuplicates(date1,date2,user) <= 0) {
             val year: Int = date1.year
-            if (user.vacationDaysLeft[year.toString()]!! >= duration) {
-                user.vacationDaysLeft[year.toString()] = user.vacationDaysLeft[year.toString()]!! - duration
-                val vacation = Vacation(startDate = date1, endDate = date2, duration = duration, employee = user)
-                user.vacations.add(vacation)
-                vacationRepo.save(vacation)
+            if (user.vacationDaysLeft[year.toString()] != null) {
+                if (user.vacationDaysLeft[year.toString()]!! >= duration) {
+                    for (vacation in user.vacations) {
+                        val check1 = ((date1 <= vacation.startDate) && (date2 >= vacation.startDate))
+                        val check2 = ((date1 > vacation.startDate) && (date1 < vacation.endDate))
+                        if (check1 || check2) {
+                            return
+                        }
+                    }
+                    user.vacationDaysLeft[year.toString()] = user.vacationDaysLeft[year.toString()]!! - duration
+                    val vacation = Vacation(startDate = date1, endDate = date2, duration = duration, employee = user)
+                    user.vacations+=vacation
+                    vacationRepo.save(vacation)
+                }
             }
-        }
+    }
+
+    fun getVacations(user: User): Int {
+        return user.vacations.size
     }
 }

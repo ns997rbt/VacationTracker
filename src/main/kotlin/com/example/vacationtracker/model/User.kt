@@ -24,14 +24,6 @@ class User (
     @MapKeyColumn(name = "year")
     @Column(name = "days_left")
     var vacationDaysLeft: MutableMap<String,Int> = mutableMapOf(),
-    //@OneToMany(mappedBy = "employee")
-    @OneToMany(mappedBy = "id")
+    @OneToMany
     var vacations: MutableList<Vacation> = mutableListOf()
 )
-
-//@ElementCollection
-//    @CollectionTable(name = "order_item_mapping",
-//      joinColumns = {@JoinColumn(name = "order_id", referencedColumnName = "id")})
-//    @MapKeyColumn(name = "item_name")
-//    @Column(name = "price")
-//    private Map<String, Double> itemPriceMap;

@@ -7,7 +7,6 @@ import java.time.LocalDate
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     var id: Long? = null,
-    // timestamp ?
     @Column(name = "start_date")
     var startDate: LocalDate,
     @Column(name = "end_date")
